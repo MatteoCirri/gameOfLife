@@ -32,8 +32,10 @@ class Board extends React.Component {
     let gen = board[0].split(' ')[1];
     size = board[1].split(' ');
     for(let i = 0; i < +[size[0]]; i++) {
-       grid.push(board[i + 2].split(''));
+       grid.push(board[i + 2].split(' '));
     }
+
+    //Crea una griglia dove ogni cella viva è rappresentata da un 1 e ogni cella morta da uno 0
     for(let i = 0; i < size[0]; i++) {
       for(let j = 0; j < size[1]; j++) {
         if(grid[i][j] === '.') {
@@ -43,6 +45,7 @@ class Board extends React.Component {
         }
       }
     }
+
     this.setState({
       grid: grid,
       gen: gen,
@@ -51,6 +54,7 @@ class Board extends React.Component {
     this.lifeCicle();
   }
 
+  //Setta un intervallo per cui ogni secondo si ha una nuova generazione di celle
   lifeCicle() {
     setInterval(() => {
       this.nextGen();
@@ -61,6 +65,7 @@ class Board extends React.Component {
     const newGen = +[this.state.gen] + 1;
     let newGrid = [];
 
+    //Crea una nuova griglia delle stesse dimensioni della griglia iniziale, ma ogni cella adesso rappresenta il numero di celle vive adiacenti
     for(let i = 0; i < this.state.size[0]; i++) {
       let newRow = [];
       for(let j = 0; j < this.state.size[1]; j++) {
@@ -69,6 +74,8 @@ class Board extends React.Component {
       newGrid.push(newRow);
     }
 
+
+    //Implementa le regola del 'Game of Life'
     for(let i = 0; i < this.state.size[0]; i++) {
       for(let j = 0; j < this.state.size[1]; j++) {
         if(newGrid[i][j] < 2 || newGrid[i][j] > 3) {
@@ -89,6 +96,7 @@ class Board extends React.Component {
     })
   }
 
+  //Ritorna il numero di celle vive intorno ad una data cella
   countNeighbor(row, col) {
     let copyCell = 0;
     for(let i = -1; i <= 1; i++) {
@@ -104,6 +112,7 @@ class Board extends React.Component {
     return copyCell;
   }
 
+  //Controlla se la cella è fuori dal bordo della griglia
   checkIsOut(row, col) {
     return (row < 0) || (col < 0) || (row >= this.state.size[0]) || (col >= this.state.size[1])
   }
@@ -116,7 +125,7 @@ class Board extends React.Component {
 
     this.state.grid.forEach(row => {
       row.forEach(cell => {
-        dataComponent.push(<span className="cell"> {cell ? '*' : '.'} </span>);
+        dataComponent.push(<span className="cell"> {cell ? '◼️' : '.'} </span>);
       })
       dataComponent.push(<br></br>);
     })
