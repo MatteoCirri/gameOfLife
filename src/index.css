@@ -1,0 +1,17 @@
+body {
+  margin: 30px;
+}
+
+.cell {
+  font-size: 20px;
+  font-weight: bold;
+  height: 35px;
+  text-align: center;
+  width: 35px;
+  float: left;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+}
