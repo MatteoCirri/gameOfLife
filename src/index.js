@@ -63,25 +63,22 @@ class Board extends React.Component {
 
   nextGen() {
     const newGen = +[this.state.gen] + 1;
+    let neighbors;
     let newGrid = [];
-
-    //Crea una nuova griglia delle stesse dimensioni della griglia iniziale, ma ogni cella adesso rappresenta il numero di celle vive adiacenti
     for(let i = 0; i < this.state.size[0]; i++) {
-      let newRow = [];
-      for(let j = 0; j < this.state.size[1]; j++) {
-        newRow.push(this.countNeighbor(i, j));
-      }
-      newGrid.push(newRow);
+      newGrid[i] = [];
     }
 
-    //Implementa le regole del 'Game of Life'
+
+    //Implementa le regole del game of life
     for(let i = 0; i < this.state.size[0]; i++) {
       for(let j = 0; j < this.state.size[1]; j++) {
-        if(newGrid[i][j] < 2 || newGrid[i][j] > 3) {
+        neighbors = this.countNeighbor(i, j);
+        if(neighbors < 2 || neighbors > 3) {
           newGrid[i][j] = 0;
-        } else if (!this.state.grid[i][j] && newGrid[i][j] === 3) {
+        } else if (!this.state.grid[i][j] && neighbors === 3) {
           newGrid[i][j] = 1;
-        } else if (!this.state.grid[i][j] && newGrid[i][j] === 2) {
+        } else if (!this.state.grid[i][j] && neighbors === 2) {
           newGrid[i][j] = 0;
         } else {
           newGrid[i][j] = 1;
@@ -112,8 +109,6 @@ class Board extends React.Component {
         break;
       }
     }
-
-
 
     this.setState({
       gen: newGen,
