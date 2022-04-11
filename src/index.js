@@ -74,8 +74,7 @@ class Board extends React.Component {
       newGrid.push(newRow);
     }
 
-
-    //Implementa le regola del 'Game of Life'
+    //Implementa le regole del 'Game of Life'
     for(let i = 0; i < this.state.size[0]; i++) {
       for(let j = 0; j < this.state.size[1]; j++) {
         if(newGrid[i][j] < 2 || newGrid[i][j] > 3) {
@@ -89,6 +88,32 @@ class Board extends React.Component {
         }
       }
     }
+
+    //Aggiunge una riga se c'è una cella viva sul bordo inferiore della griglia
+    for(let j = 0; j < this.state.size[1]; j++) {
+      if(newGrid[this.state.size[0] - 1][j]) {
+        this.state.size[0]++
+        let newArray = [];
+        for(let c = 0; c < this.state.size[1]; c++) {
+          newArray.push(0);
+        }
+        newGrid.push(newArray)
+        break;
+      }
+    }
+
+    //Aggiunge una colonna se c'è una cella viva sul bordo destro della griglia
+    for(let i = 0; i < this.state.size[0]; i++) {
+      if(newGrid[i][this.state.size[1] - 1]) {
+        this.state.size[1]++
+        for(let i = 0; i < this.state.size[0]; i++) {
+          newGrid[i].push(0)
+        }
+        break;
+      }
+    }
+
+
 
     this.setState({
       gen: newGen,
