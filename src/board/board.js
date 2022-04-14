@@ -9,42 +9,40 @@ export default function Board(props) {
   const [size, setSize] = useState([]);
 
   useEffect(() => {
-    readFile();
-  }, []);
+    if(props.file) {
+      setBoard(props.file)
+    }
+  }, [props.file]);
 
   useEffect(() => {
-    const interval = setInterval(function(){
-      nextGen();
-    },1000);
-    return () => {
-      clearInterval(interval);
+    if(props.file) {
+      const interval = setInterval(function(){
+        nextGen();
+      },1000);
+      return () => {
+        clearInterval(interval);
+      }
     }
   }, [grid, gen, size]);
 
   let dataComponent = [];
 
-  dataComponent.push(<div>Generazione {gen}</div>);
-  dataComponent.push(<div>{size[0]} {size[1]}</div>);
+  if(props.file) {
+    dataComponent.push(<div>Generazione {gen}</div>);
+    dataComponent.push(<div>{size[0]} {size[1]}</div>);
 
-  grid.forEach(row => {
-    row.forEach(cell => {
-      dataComponent.push(<span className="cell"> {cell ? '◼️' : '.'} </span>);
+    grid.forEach(row => {
+      row.forEach(cell => {
+        dataComponent.push(<span className="cell"> {cell ? '◼️' : '.'} </span>);
+      })
+      dataComponent.push(<br></br>);
     })
-    dataComponent.push(<br></br>);
-  })
+  }
 
   return(dataComponent);
 
-  function readFile() {
-    fetch(start)
-      .then((r) => r.text())
-      .then(text  => {
-        setBoard(text);
-      }).catch(error => {
-        console.log(error);
-      });
-  }
-
+  //Riceve il testo del file e inizializza la griglia
+  //@text string
   function setBoard(text) {
     let grid1 = [];
     let board1 = [];
@@ -73,6 +71,7 @@ export default function Board(props) {
 
   function nextGen() {
     const newGen = +[gen] + 1;
+    const newSize = size;
     let neighbors;
     let newGrid = [];
     for(let i = 0; i < size[0]; i++) {
@@ -98,7 +97,7 @@ export default function Board(props) {
     //Aggiunge una riga se c'è una cella viva sul bordo inferiore della griglia
     for(let j = 0; j < size[1]; j++) {
       if(newGrid[size[0] - 1][j]) {
-        size[0]++
+        newSize[0]++
         let newArray = [];
         for(let c = 0; c < size[1]; c++) {
           newArray.push(0);
@@ -111,7 +110,7 @@ export default function Board(props) {
     //Aggiunge una colonna se c'è una cella viva sul bordo destro della griglia
     for(let i = 0; i < size[0]; i++) {
       if(newGrid[i][size[1] - 1]) {
-        size[1]++
+        newSize[1]++
         for(let i = 0; i < size[0]; i++) {
           newGrid[i].push(0)
         }
@@ -121,9 +120,12 @@ export default function Board(props) {
 
     setGrid(newGrid);
     setGen(newGen)
+    setSize(newSize)
   }
 
   //Ritorna il numero di celle vive intorno ad una data cella
+  //@row number: indice della riga in cui si trova la cella
+  //@col number: indice della colonna in cui si trova la cella
   function countNeighbor(row, col) {
     let copyCell = 0;
     for(let i = -1; i <= 1; i++) {
@@ -140,6 +142,8 @@ export default function Board(props) {
   }
 
   //Controlla se la cella è fuori dal bordo della griglia
+  //@row number: indice della riga in cui si trova la cella
+  //@col number: indice della colonna in cui si trova la cella
   function checkIsOut(row, col) {
     return (row < 0) || (col < 0) || (row >= size[0]) || (col >= size[1])
   }
